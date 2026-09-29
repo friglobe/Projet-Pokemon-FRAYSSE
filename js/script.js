@@ -1,94 +1,76 @@
 class Type{
-    constructor(nom){
-        this.nom =nom;
-        this.image = image;
+    constructor(data){
+        this.name =data.name;
+        this.image = data.image;
         this.color = this.getColorHexa();
     }
     getColorHexa(){
-        switch (this.arrTypes[0].color) {
-            case "Plante":
-                couleurFond = "lightgreen";
-                couleurBourdure = "green";
-                break;
-            case "Feu":
-                couleurFond = "navajowhite";
-                couleurBourdure = "orangered";
-                break;
-            case "Eau":
-                couleurFond = "lightblue";
-                couleurBourdure = "blue";
-                break;
-            case "Électrik":
-                couleurFond = "lightyellow";
-                couleurBourdure = "gold";
-                break;
-            case "Glace":
-                couleurFond = "#e0ffff";
-                couleurBourdure = "cyan";
-                break;
-            case "Combat":
-                couleurFond = "#f4cccc";
-                couleurBourdure = "darkred";
-                break;
-            case "Poison":
-                couleurFond = "plum";
-                couleurBourdure = "purple";
-                break;
-            case "Sol":
-                couleurFond = "#e6d3b3";
-                couleurBourdure = "peru";
-                break;
-            case "Vol":
-                couleurFond = "#e6e6fa";
-                couleurBourdure = "cornflowerblue";
-                break;
-            case "Psy":
-                couleurFond = "#ffd1e8";
-                couleurBourdure = "deeppink";
-                break;
-            case "Insecte":
-                couleurFond = "#e2f0cb";
-                couleurBourdure = "olivedrab";
-                break;
-            case "Roche":
-                couleurFond = "#d9c9a3";
-                couleurBourdure = "saddlebrown";
-                break;
-            case "Spectre":
-                couleurFond = "#d3c0e3";
-                couleurBourdure = "indigo";
-                break;
-            case "Dragon":
-                couleurFond = "#c3b1e1";
-                couleurBourdure = "darkslateblue";
-                break;
-            case "Ténèbres":
-                couleurFond = "#c2c2c2";
-                couleurBourdure = "black";
-                break;
-            case "Acier":
-                couleurFond = "#dce1e6";
-                couleurBourdure = "slategray";
-                break;
-            case "Fée":
-                couleurFond = "#ffe0f0";
-                couleurBourdure = "hotpink";
-                break;
-            case "Normal":
-                couleurFond = "#f0f0d8";
-                couleurBourdure = "tan";
-                break;
-            default:
-                couleurFond = "lightgrey";
-                couleurBourdure = "grey";
+        switch (this.name) {
+            case "Normal":   return "#A8A77A";
+            case "Feu":      return "#EE8130";
+            case "Eau":      return "#6390F0";
+            case "Plante":   return "#7AC74C";
+            case "Électrik": return "#F7D02C";
+            case "Glace":    return "#96D9D6";
+            case "Combat":   return "#C22E28";
+            case "Poison":   return "#A33EA1";
+            case "Sol":      return "#E2BF65";
+            case "Vol":      return "#A98FF3";
+            case "Psy":      return "#F95587";
+            case "Insecte":  return "#A6B91A";
+            case "Roche":    return "#B6A136";
+            case "Spectre":  return "#735797";
+            case "Dragon":   return "#6F35FC";
+            case "Ténèbres": return "#705746";
+            case "Acier":    return "#B7B7CE";
+            case "Fée":      return "#D685AD";
+            default:         return "#808080";
         }
-        carte.style.backgroundColor = couleurFond;
-        carte.style.borderColor = couleurBourdure;
-        carte.style.borderWidth = "3px";
-        carte.style.borderStyle = "solid";
-    };
-    
+    }
+}
 
+class Pokemon{
+    constructor(data){
+        this.id = data.pokedex_id;
+        this.image = data.sprites.regular;
+        this.name = data.name.fr;
+        this.apiTypes =data.types ?? []; 
+        this.arrTypes = this.apiTypes.map(t => new Type(t));
+        this.attack = data.stats.atk;
+        this.defense = data.stats.def;
+        this.special_attack = data.stats.spe_atk;
+        this.speed = data.stats.vit;
+    }
+    displayCard(){
+        const carte = document.createElement("article");
+        
+        const couleur = this.arrTypes[0]?.color ?? "#808080";
+        carte.style.border = `3px solid ${couleur}`;
+        carte.style.backgroundColor = `${couleur}33`;
+
+        const badges = this.arrTypes
+            .map(t => `<span class="types" style="background:${t.color}">${t.name}</span>`)
+            .join(" ");
+
+            carte.innerHTML = `
+            <figure>
+              <picture>
+                <img src="${this.image}" alt="Image ${this.name}" />
+              </picture>
+              <figcaption>
+                ${badges}
+                <h2>#${this.id} ${this.name}</h2>
+                <ol>
+                  <li>Attaque : ${this.attack}</li>
+                  <li>Défense : ${this.defense}</li>
+                  <li>Attaque spéciale : ${this.special_attack}</li>
+                  <li>Vitesse : ${this.speed}</li>
+                </ol>
+              </figcaption>
+            </figure>`;
+
+        return carte;
+    }
 }
 
 const body = document.querySelector("body");
@@ -110,124 +92,19 @@ function afficherPokemons(liste) {
     pokemonsAffiches = liste;
     main.innerHTML = "";
 
-    liste.forEach(pokemon => {
-        const carte = document.createElement("article");
-        const type = pokemon.types[0].name;
-        let couleurFond = "lightgrey";
-        let couleurBourdure = "grey";
-
-        switch (type) {
-            case "Plante":
-                couleurFond = "lightgreen";
-                couleurBourdure = "green";
-                break;
-            case "Feu":
-                couleurFond = "navajowhite";
-                couleurBourdure = "orangered";
-                break;
-            case "Eau":
-                couleurFond = "lightblue";
-                couleurBourdure = "blue";
-                break;
-            case "Électrik":
-                couleurFond = "lightyellow";
-                couleurBourdure = "gold";
-                break;
-            case "Glace":
-                couleurFond = "#e0ffff";
-                couleurBourdure = "cyan";
-                break;
-            case "Combat":
-                couleurFond = "#f4cccc";
-                couleurBourdure = "darkred";
-                break;
-            case "Poison":
-                couleurFond = "plum";
-                couleurBourdure = "purple";
-                break;
-            case "Sol":
-                couleurFond = "#e6d3b3";
-                couleurBourdure = "peru";
-                break;
-            case "Vol":
-                couleurFond = "#e6e6fa";
-                couleurBourdure = "cornflowerblue";
-                break;
-            case "Psy":
-                couleurFond = "#ffd1e8";
-                couleurBourdure = "deeppink";
-                break;
-            case "Insecte":
-                couleurFond = "#e2f0cb";
-                couleurBourdure = "olivedrab";
-                break;
-            case "Roche":
-                couleurFond = "#d9c9a3";
-                couleurBourdure = "saddlebrown";
-                break;
-            case "Spectre":
-                couleurFond = "#d3c0e3";
-                couleurBourdure = "indigo";
-                break;
-            case "Dragon":
-                couleurFond = "#c3b1e1";
-                couleurBourdure = "darkslateblue";
-                break;
-            case "Ténèbres":
-                couleurFond = "#c2c2c2";
-                couleurBourdure = "black";
-                break;
-            case "Acier":
-                couleurFond = "#dce1e6";
-                couleurBourdure = "slategray";
-                break;
-            case "Fée":
-                couleurFond = "#ffe0f0";
-                couleurBourdure = "hotpink";
-                break;
-            case "Normal":
-                couleurFond = "#f0f0d8";
-                couleurBourdure = "tan";
-                break;
-            default:
-                couleurFond = "lightgrey";
-                couleurBourdure = "grey";
-        }
-        carte.style.backgroundColor = couleurFond;
-        carte.style.borderColor = couleurBourdure;
-        carte.style.borderWidth = "3px";
-        carte.style.borderStyle = "solid";
-
-        carte.innerHTML = `
-            <figure>
-              <picture>
-                <img src="${pokemon.sprites.regular}" alt="Image ${pokemon.name.fr}" />
-              </picture>
-              <figcaption>
-                <span class="types">${pokemon.types[0].name}</span>
-                <h2>${pokemon.name.fr}</h2>
-                <ol>
-                  <li>Points de vie : ${pokemon.stats.hp}</li>
-                  <li>Attaque : ${pokemon.stats.atk}</li>
-                  <li>Défense : ${pokemon.stats.def}</li>
-                  <li>Attaque spécial : ${pokemon.stats.spe_atk}</li>
-                  <li>Vitesse : ${pokemon.stats.vit}</li>
-                </ol>
-              </figcaption>
-            </figure>`;
-
-        main.appendChild(carte);
-    });
+    liste.forEach(pokemon => main.appendChild(pokemon.displayCard()));
 }
 
 
 async function loadData(generation) {
-    const data = await fetch(`https://tyradex.app/api/v1/gen/${generation}`)
-        .then(response => response.json())
-        .catch(error => alert("Erreur : " + error));
-
-    pokemonsActuels = data;
-    afficherPokemons(pokemonsActuels);
+    try {
+        const response = await fetch(`https://tyradex.app/api/v1/gen/${generation}`);
+        const data = await response.json();
+        pokemonsActuels = data.map(p => new Pokemon(p));
+        afficherPokemons(pokemonsActuels);
+    } catch (error) {
+        alert("Erreur : " + error);
+    }
 }
 
 const typesPokemon = ["Normal", "Feu", "Eau", "Plante", "Électrik", "Glace",
@@ -249,7 +126,7 @@ conteneurBoutons.appendChild(boutonTous);
 typesPokemon.forEach(unType =>{
     const bouton = document.createElement("button");
     bouton.textContent = unType;
-
+    bouton.style.backgroundColor = new Type({ name: unType }).color; //bonus
     bouton.addEventListener("click",()=>{
         const pokemonsFiltres = pokemonsActuels.filter(pokemon => pokemon.types.some(t => t.name ===unType));
         afficherPokemons(pokemonsFiltres);
@@ -271,20 +148,14 @@ selectTri.addEventListener("change",function(event){
     const critere =event.target.value;
 
     const listeTriee = [...pokemonsAffiches].sort((a,b)=>{
-        switch(critere){
-            case "nom":
-                return a.name.fr.localeCompare(b.name.fr);
-            case "hp":
-                return b.stats.hp - a.stats.hp;
-            case "attaque":
-                return b.stats.atk - a.stats.atk;
-            case "defense":
-                return b.stats.def - a.stats.def;
-            case "vitesse":
-                return b.stats.vit - a.stats.vit; default:
-                return 0;
-        }
-    })
+        switch (critere) {
+    case "nom":     return a.name.localeCompare(b.name);
+    case "hp":      return b.hp - a.hp;
+    case "attaque": return b.attack - a.attack;
+    case "defense": return b.defense - a.defense;
+    case "vitesse": return b.speed - a.speed;
+    default:        return 0;
+    }})
     afficherPokemons(listeTriee);
 });
 
