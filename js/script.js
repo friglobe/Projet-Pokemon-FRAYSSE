@@ -49,8 +49,8 @@ class Pokemon{
         carte.style.backgroundColor = `${couleur}33`;
 
         const badges = this.arrTypes
-            .map(t => `<span class="types" style="background:${t.color}">${t.name}</span>`)
-            .join(" ");
+            .map(t => `<span class="badge-type" style="background:${t.color}">${t.name}</span>`)
+            .join("");
 
             carte.innerHTML = `
             <figure>
@@ -58,7 +58,7 @@ class Pokemon{
                 <img src="${this.image}" alt="Image ${this.name}" />
               </picture>
               <figcaption>
-                ${badges}
+                <div class="types">${badges}</div>
                 <h2>#${this.id} ${this.name}</h2>
                 <ol>
                   <li>Attaque : ${this.attack}</li>
@@ -128,7 +128,7 @@ typesPokemon.forEach(unType =>{
     bouton.textContent = unType;
     bouton.style.backgroundColor = new Type({ name: unType }).color; //bonus
     bouton.addEventListener("click",()=>{
-        const pokemonsFiltres = pokemonsActuels.filter(pokemon => pokemon.types.some(t => t.name ===unType));
+        const pokemonsFiltres = pokemonsActuels.filter(pokemon => pokemon.arrTypes.some(t => t.name === unType));
         afficherPokemons(pokemonsFiltres);
     });
     conteneurBoutons.appendChild(bouton);
